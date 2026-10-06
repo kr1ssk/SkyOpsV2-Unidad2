@@ -2,7 +2,9 @@ module.exports = function (config) {
   config.set({
     frameworks: ['jasmine'],
     files: ['test/**/*.spec.js'],
-    preprocessors: { 'test/**/*.spec.js': ['webpack', 'coverage'] },
+    preprocessors: {
+      'test/**/*.spec.js': ['webpack']
+    },
     webpack: {
       mode: 'development',
       module: {
