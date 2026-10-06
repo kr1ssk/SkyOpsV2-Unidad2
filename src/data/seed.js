@@ -1,0 +1,17 @@
+export const catalogSeed = [
+  { nombre:'Actuador de Superficie de Control', pn:'PN-27-6612', sn:'SN-34410', bodega:'Bodega ANF - A03', ata:'ESTRUCTURAS - ATA 27', stock:4, certificado:true },
+  { nombre:'Actuador de Tren Principal', pn:'PN-32-4471', sn:'SN-88213', bodega:'Bodega SCL - A17', ata:'TREN DE ATERRIZAJE - ATA 32', stock:1, certificado:true },
+  { nombre:'Álabe de Turbina (Fan Blade)', pn:'PN-72-7754', sn:'SN-40213', bodega:'Bodega ANF - D11', ata:'MOTORES - ATA 72', stock:2, certificado:false }
+];
+
+export const fleetSeed = [
+  { matricula:'CC-BFA', modelo:'Airbus A320neo', aerolinea:'LATAM Airlines', aeropuerto:'SCL', ubicacion:'Puerta 14', aog:true },
+  { matricula:'CC-AVE', modelo:'Airbus A321', aerolinea:'LATAM Airlines', aeropuerto:'SCL', ubicacion:'Plataforma Remota 3', aog:false },
+  { matricula:'CC-AZS', modelo:'Boeing 737-800', aerolinea:'Sky Airline', aeropuerto:'ANF', ubicacion:'Hangar 2', aog:true },
+  { matricula:'CC-DBC', modelo:'Airbus A320', aerolinea:'JetSMART', aeropuerto:'SCL', ubicacion:'Puerta 22', aog:false }
+];
+
+export const logbookSeed = [
+  { folio:'AOG-8004', matricula:'CC-AZS', destino:'Hangar 2', responsable:'Fernanda Rojas', fecha:'2026-08-27 16:55', respuesta:'78 s', estado:'COMPLETADO' },
+  { folio:'AOG-8006', matricula:'CC-DGA', destino:'Puerta 9', responsable:'Fernanda Rojas', fecha:'2026-08-27 12:30', respuesta:'74 s', estado:'EN CURSO' }
+];
