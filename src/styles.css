@@ -1,0 +1,25 @@
+:root{
+  --sky-dark:#0f172a;
+  --sky-panel:#1e293b;
+  --sky-blue:#0284c7;
+  --sky-cyan:#38bdf8;
+  --sky-bg:#f8fafc;
+}
+body{background:var(--sky-bg);color:#334155}
+.sky-navbar{background:var(--sky-dark)}
+.sky-brand small{display:block;color:#94a3b8;font-size:.72rem}
+main{min-height:calc(100vh - 132px)}
+.page-title{margin-bottom:1.5rem}
+.panel-dark{background:var(--sky-dark);color:#e2e8f0;border-radius:.75rem;padding:1.25rem}
+.kpi{border-left:4px solid var(--sky-blue);height:100%}
+.kpi-number{font-size:2rem;font-weight:700;color:var(--sky-dark)}
+.component-card{height:100%;transition:transform .15s ease}
+.component-card:hover{transform:translateY(-2px)}
+.status-aog{background:#7f1d1d!important}
+.status-ok{background:#14532d!important}
+.table-responsive{border-radius:.5rem}
+footer{background:#e2e8f0;color:#475569}
+@media(max-width:768px){
+  .page-title h1{font-size:1.7rem}
+  .responsive-stack{flex-direction:column}
+}
