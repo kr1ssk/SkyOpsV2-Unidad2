@@ -1,8 +1,9 @@
 module.exports = function (config) {
   config.set({
     frameworks: ['jasmine'],
-    files: ['test/**/*.spec.js'],
+    files: ['src/utils/validators.js', 'test/**/*.spec.js'],
     preprocessors: {
+      'src/utils/validators.js': ['webpack', 'coverage'],
       'test/**/*.spec.js': ['webpack']
     },
     webpack: {

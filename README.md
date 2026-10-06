@@ -8,13 +8,14 @@ Migración de **SkyOpsV2** desde HTML/CSS/JavaScript tradicional hacia **React**
 - SPA con React Router.
 - React Bootstrap y Bootstrap.
 - Diseño responsivo.
+- Organización inspirada en **Atomic Design**: átomos, moléculas, organismos/páginas.
 - Separación por componentes, páginas, servicios, datos y utilidades.
 - Formularios controlados y validaciones.
 - Persistencia con localStorage y sessionStorage.
 - Flujo AOG completo: **Flota → Catálogo → Manifiesto → Despacho → Bitácora**.
 - Pruebas con React Testing Library/Jest.
 - Configuración adicional de **Jasmine + Karma**.
-- Reporte de cobertura con Karma Coverage y cobertura de Jest.
+- Reportes de cobertura con Jest y Karma Coverage.
 - buildspec.yml para AWS CodeBuild.
 - GitHub Actions para test y build.
 
@@ -64,6 +65,10 @@ El resultado queda en build/.
 ~~~text
 src/
 ├── components/
+│   ├── atoms/
+│   │   └── StatusBadge.js
+│   ├── molecules/
+│   │   └── KpiCard.js
 │   ├── AppNavbar.js
 │   └── Layout.js
 ├── data/
