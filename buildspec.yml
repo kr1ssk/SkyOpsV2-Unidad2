@@ -2,16 +2,17 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 18
+      nodejs: 22
     commands:
       - npm ci
   pre_build:
     commands:
-      - npm run test:ci
+      - CI=true npm run test:ci -- --runInBand
   build:
     commands:
       - npm run build
 artifacts:
   files:
-    - '**/*'
+    - "**/*"
   base-directory: build
+# Jasmine/Karma y sus evidencias se ejecutan en GitHub Actions con Chrome.

@@ -1,18 +1,51 @@
 name: SkyOps CI
 on:
   push:
-    branches: [main]
+    branches: [main, "feat/**"]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CI: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
-      - run: npm install
-      - run: npm run test:ci
-      - run: npm run build
+          cache-dependency-path: package-lock.json
+      - name: Install reproducible dependencies
+        run: npm ci
+      - name: Jest component and validation tests
+        run: npm run test:ci -- --runInBand
+      - name: Set up Chrome for Jasmine and Karma
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+      - name: Jasmine and Karma in Chrome
+        env:
+          CHROME_BIN: ${{ steps.chrome.outputs.chrome-path }}
+        run: npm run test:karma:ci
+      - name: Production build
+        run: npm run build
+      - name: Save test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testing-evidence
+          path: |
+            coverage/
+            test-results/
+          if-no-files-found: warn
+      - name: Save production build
+        uses: actions/upload-artifact@v4
+        with:
+          name: skyops-build
+          path: build/
