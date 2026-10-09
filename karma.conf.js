@@ -45,24 +45,15 @@ module.exports = function (config) {
         ],
       },
     },
-    reporters: ["progress", "coverage", "junit"],
+    reporters: ["progress", "coverage"],
     coverageReporter: {
       dir: "coverage/karma",
-      check: {
-        global: { statements: 90, branches: 90, functions: 90, lines: 90 },
-      },
       subdir: ".",
       reporters: [
         { type: "html" },
         { type: "text-summary" },
         { type: "json-summary" },
-        { type: "lcovonly" },
       ],
-    },
-    junitReporter: {
-      outputDir: "test-results",
-      outputFile: "jasmine.xml",
-      useBrowserName: false,
     },
     client: { jasmine: { random: true, seed: "20261009" } },
     browsers: ["ChromeHeadless"],

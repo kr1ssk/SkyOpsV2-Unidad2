@@ -26,8 +26,7 @@
     "karma-coverage": "^2.2.1",
     "karma-jasmine": "^5.1.0",
     "karma-webpack": "^5.0.1",
-    "webpack": "^5.96.1",
-    "karma-junit-reporter": "^2.0.1"
+    "webpack": "^5.96.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -35,9 +34,7 @@
     "test": "react-scripts test",
     "test:ci": "react-scripts test --watchAll=false --coverage",
     "test:karma": "karma start karma.conf.js --single-run",
-    "test:karma:watch": "karma start karma.conf.js --no-single-run --auto-watch",
-    "test:karma:ci": "karma start karma.conf.js --single-run --browsers ChromeHeadlessCI",
-    "check": "npm run test:ci -- --runInBand && npm run test:karma && npm run build"
+    "test:karma:ci": "karma start karma.conf.js --single-run --browsers ChromeHeadlessCI"
   },
   "browserslist": {
     "production": [

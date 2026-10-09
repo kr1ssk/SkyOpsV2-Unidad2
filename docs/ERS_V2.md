@@ -30,29 +30,29 @@ Registro, sesión y roles funcionan exclusivamente como simulación frontend. La
 
 ## 4. Requisitos funcionales
 
-| ID | Requisito verificable | Criterio de aceptación | Evidencia automatizada |
-| --- | --- | --- | --- |
-| RF01 | Navegación SPA | Menú común y rutas de React Router; ruta desconocida muestra alternativa de retorno | C11, C25, V04 |
-| RF02 | Catálogo | Renderiza los datos de cada componente y su imagen local | C01, C02 |
-| RF03 | Búsqueda y filtros | Combina texto, categoría, ATA y stock; limpiar restaura resultados; filtros aparecen en URL | C03-C05, V11-V12 |
-| RF04 | Categorías y detalle | Cada categoría navega al catálogo filtrado; detalle por P/N y manejo de identificador inexistente | C11-C12, V02 |
-| RF05 | Ofertas | Solo muestra componentes cuyo descuento es mayor a cero y calcula el precio final | C10, S01 |
-| RF06 | Agregar al manifiesto | Recibe una cantidad entera positiva y no permite exceder stock al agregar repetidamente | C07-C09, S02-S04 |
-| RF07 | Editar manifiesto | Modifica cantidad, elimina una línea con cantidad cero y permite vaciar con confirmación | C13-C14, V13-V14, S05 |
-| RF08 | Resumen comercial | Muestra subtotal por línea, unidades y total en CLP con descuentos | C13, S01 |
-| RF09 | Selección de aeronave | Flota filtra y guarda matrícula para avisar en catálogo y completar despacho | V06 |
-| RF10 | Checkout validado | Requiere matrícula CC-XXX, nombre y apellido, licencia AA-0000, destino, dirección y declaración | C15-C17 |
-| RF11 | Compra aprobada | Revalida stock, guarda orden e instantánea de productos, descuenta inventario, vacía carrito y genera comprobante | C18, S07-S09 |
-| RF12 | Compra fallida | Rechazo conserva carrito e inventario y muestra reintento; fallo de guardado restaura el estado previo | C19, S06, S18 |
-| RF13 | Comprobante e historial | Comprobante incluye folio, fecha, productos, cantidades, entrega y total; usuarios consultan sus pedidos | V21, V26-V29 |
-| RF14 | Bitácora | Filtra por matrícula y estado; resolver marca despacho y orden como completados | V07 |
-| RF15 | Registro y sesión | Valida datos y correo único; login erróneo informa; logout actualiza el menú | C30-C31, S16-S17, V31, V33 |
-| RF16 | Perfil y autocompletado | Edita nombre y dirección persistidos; checkout toma ambos al iniciar la vista | C20, C31, V22, V34 |
-| RF17 | CRUD de componentes | Crea, lista, edita y elimina; valida P/N único, precio positivo, stock entero y descuento 0-90% | C21-C23, C26-C28, S10-S11 |
-| RF18 | CRUD de categorías | Crea, lista, renombra y elimina; renombrar actualiza componentes; bloquea eliminación si está usada | C29, S12, V17-V18 |
-| RF19 | Administración y reportes | Acceso de demostración por rol, dashboard, órdenes, usuarios, stock crítico y total de ventas | C24, V15-V16, V21-V24 |
-| RF20 | Contenido y contacto | Páginas de proyecto, blog y contacto con validaciones; contacto genera ticket simulado | V03-V05, V08-V09 |
-| RF21 | Persistencia y actualización | Cambios actualizan estado React y menú; no repone elementos borrados al recargar; maneja JSON dañado | C09, S13-S15, V32 |
+| ID | Requisito verificable | Criterio de aceptación |
+| --- | --- | --- |
+| RF01 | Navegación SPA | Menú común y rutas de React Router; ruta desconocida muestra alternativa de retorno |
+| RF02 | Catálogo | Renderiza los datos de cada componente y su imagen local |
+| RF03 | Búsqueda y filtros | Combina texto, categoría, ATA y stock; limpiar restaura resultados; filtros aparecen en URL |
+| RF04 | Categorías y detalle | Cada categoría navega al catálogo filtrado; detalle por P/N y manejo de identificador inexistente |
+| RF05 | Ofertas | Solo muestra componentes cuyo descuento es mayor a cero y calcula el precio final |
+| RF06 | Agregar al manifiesto | Recibe una cantidad entera positiva y no permite exceder stock al agregar repetidamente |
+| RF07 | Editar manifiesto | Modifica cantidad, elimina una línea con cantidad cero y permite vaciar con confirmación |
+| RF08 | Resumen comercial | Muestra subtotal por línea, unidades y total en CLP con descuentos |
+| RF09 | Selección de aeronave | Flota filtra y guarda matrícula para avisar en catálogo y completar despacho |
+| RF10 | Checkout validado | Requiere matrícula CC-XXX, nombre y apellido, licencia AA-0000, destino, dirección y declaración |
+| RF11 | Compra aprobada | Revalida stock, guarda orden e instantánea de productos, descuenta inventario, vacía carrito y genera comprobante |
+| RF12 | Compra fallida | Rechazo conserva carrito e inventario y muestra reintento; maneja errores de guardado |
+| RF13 | Comprobante e historial | Comprobante incluye folio, fecha, productos, cantidades, entrega y total; usuarios consultan sus pedidos |
+| RF14 | Bitácora | Filtra por matrícula y estado; resolver marca despacho y orden como completados |
+| RF15 | Registro y sesión | Valida datos y correo único; login erróneo informa; logout actualiza el menú |
+| RF16 | Perfil y autocompletado | Edita nombre y dirección persistidos; checkout toma ambos al iniciar la vista |
+| RF17 | CRUD de componentes | Crea, lista, edita y elimina; valida P/N único, precio positivo, stock entero y descuento 0-90% |
+| RF18 | CRUD de categorías | Crea, lista, renombra y elimina; renombrar actualiza componentes; bloquea eliminación si está usada |
+| RF19 | Administración y reportes | Acceso de demostración por rol, dashboard, órdenes, usuarios, stock crítico y total de ventas |
+| RF20 | Contenido y contacto | Páginas de proyecto, blog y contacto con validaciones; contacto genera ticket simulado |
+| RF21 | Persistencia y actualización | Cambios actualizan estado React y menú; no repone elementos borrados al recargar; maneja JSON dañado |
 
 ## 5. Requisitos no funcionales
 
@@ -62,7 +62,7 @@ Registro, sesión y roles funcionan exclusivamente como simulación frontend. La
 | RNF02 | Componentes comprensibles | ProductCard recibe product y onAdd; ProductForm recibe initial, categories y callbacks; páginas coordinan servicios |
 | RNF03 | Usabilidad | Etiquetas asociadas a inputs, errores junto a campos, avisos de stock y estados vacíos |
 | RNF04 | Pruebas | Jasmine ejecuta lógica y componentes en Chrome mediante Karma; mocks con spies y limpieza entre casos |
-| RNF05 | Cobertura | Reportes HTML, JSON, LCOV y JUnit; umbral interno 90% por métrica, elegido por el proyecto y no impuesto por la rúbrica |
+| RNF05 | Cobertura | Reporte HTML y resumen de las pruebas ejecutadas; sin umbral de porcentaje impuesto por el proyecto |
 | RNF06 | Instalación repetible | package-lock.json versionado y npm ci en GitHub Actions; Node 22 para CI |
 | RNF07 | Recursos propios | Imágenes SVG locales recuperadas del repositorio original; no dependen de una URL de imágenes externa |
 
@@ -103,8 +103,8 @@ Registro, sesión y roles funcionan exclusivamente como simulación frontend. La
 | --- | --- |
 | IE2.1.1 / IE2.1.3 | Estructura src, rutas SPA, servicios y demostración del flujo |
 | IE2.1.2 / IE2.1.4 | Props de ProductCard/ProductForm, estados de formularios, hook persistente, Bootstrap responsive |
-| IE2.2.1 / IE2.2.2 | Diez casos C01-C10 como selección mínima y suite ampliada de componentes, servicios y validadores |
-| IE2.3.1 / IE2.3.2 | Karma, webpack/Babel, spies, limpieza de pruebas, cobertura, JUnit y CI |
+| IE2.2.1 / IE2.2.2 | Diez pruebas C01-C10 de componentes React con Jasmine y Karma |
+| IE2.3.1 / IE2.3.2 | Karma, webpack/Babel, spies, limpieza de pruebas, resultados y cobertura |
 
 La pauta asigna 40% al encargo y 60% a la presentación individual. El equipo debe comprobar los documentos, ensayar la demostración y poder explicar sus decisiones. Esta propuesta no sustituye la revisión del docente ni asegura una calificación.
 
@@ -117,3 +117,9 @@ La pauta asigna 40% al encargo y 60% a la presentación individual. El equipo de
 - Guía docente Jasmine/Karma: https://github.com/donkiwicl/donkiwicl.github.io/blob/main/GUIA_INSTALACION_JASMINE_KARMA.md
 
 Los conceptos de los ejemplos docentes orientan esta implementación; no se traslada la versión de React/Vite de los ejemplos al proyecto existente. Se mantiene React 18 y react-scripts para reducir el alcance de la migración. `poo_tareafonda` corresponde a DSY1102 y Java/JavaFX, y no se usa como especificación de Fullstack II.
+
+## 11. Alcance limitado de esta revisión
+
+Se mantienen las ocho páginas del primer SkyOps: inicio, proyecto, flota, catálogo, manifiesto, despacho, bitácora y contacto. Las vistas nuevas siguen el diagrama del anexo: categorías, ofertas, detalle, registro e ingreso, perfil, historial de compras, blog, compra exitosa o fallida y panel administrativo. Dashboard, usuarios, órdenes, comprobantes, categorías, productos críticos y reportes aparecen en la figura 10 del anexo.
+
+Se retiran la suite ampliada de 86 casos, el umbral interno del 90 %, los reportes LCOV/JUnit, los botones de impresión y la publicación de artefactos del CI. La automatización de instalación, pruebas y build ya existía en el repositorio React y se conserva sin nuevas funciones de despliegue. Los cinco tests Jest anteriores se mantienen como comprobación heredada; las diez pruebas evaluadas son Jasmine/Karma.

@@ -366,9 +366,6 @@ export default function AdminPage() {
             Órdenes en curso:{" "}
             {orders.filter((order) => order.estado === "EN CURSO").length}
           </p>
-          <Button variant="outline-primary" onClick={() => window.print()}>
-            Imprimir reporte
-          </Button>
         </>
       )}
     </>

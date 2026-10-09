@@ -35,17 +35,3 @@ jobs:
         run: npm run test:karma:ci
       - name: Production build
         run: npm run build
-      - name: Save test evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: testing-evidence
-          path: |
-            coverage/
-            test-results/
-          if-no-files-found: warn
-      - name: Save production build
-        uses: actions/upload-artifact@v4
-        with:
-          name: skyops-build
-          path: build/

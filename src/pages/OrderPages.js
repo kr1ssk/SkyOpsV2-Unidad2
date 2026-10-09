@@ -41,9 +41,6 @@ export function Receipt({ order }) {
       <p>
         Comprobante académico de pago simulado; no es una boleta tributaria.
       </p>
-      <Button variant="outline-secondary" onClick={() => window.print()}>
-        Imprimir comprobante
-      </Button>
     </>
   );
 }
