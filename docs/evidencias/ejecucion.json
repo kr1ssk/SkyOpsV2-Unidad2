@@ -1,0 +1,35 @@
+{
+  "fecha": "2026-10-09",
+  "node": "24.19.0",
+  "npm": "11.9.0",
+  "navegador": "Chromium 153.0.8010.0",
+  "instalacion": "npm ci --no-audit --no-fund",
+  "jasmine": {
+    "total": 86,
+    "correctas": 86,
+    "fallidas": 0,
+    "componentes_vistas": 65,
+    "servicios": 18,
+    "validadores": 3
+  },
+  "jest": {
+    "total": 5,
+    "correctas": 5
+  },
+  "build": "CI=true npm run build: correcto",
+  "responsividad": [
+    {
+      "ancho": 390,
+      "desbordamiento": false
+    },
+    {
+      "ancho": 768,
+      "desbordamiento": false
+    },
+    {
+      "ancho": 1440,
+      "desbordamiento": false
+    }
+  ],
+  "nota": "Ejecuci\u00f3n local verificada. El estado remoto de GitHub Actions se comprueba por separado."
+}
