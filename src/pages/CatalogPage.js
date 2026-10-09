@@ -1,34 +1,109 @@
-import { useMemo, useState } from 'react';
-import { Alert, Badge, Button, Card, Col, Form, Row } from 'react-bootstrap';
-import { keys, read, write } from '../services/storage';
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
+import { useSearchParams } from "react-router-dom";
+import useStoredData from "../hooks/useStoredData";
+import { keys } from "../services/storage";
+import { addToCart } from "../services/shop";
+import ProductCard from "../components/ProductCard";
 
-export default function CatalogPage(){
-  const [catalog,setCatalog]=useState(()=>read(keys.catalog));
-  const [search,setSearch]=useState(''), [onlyStock,setOnlyStock]=useState(false);
-  const selected=sessionStorage.getItem('skyops_u2_aeronave');
-  const filtered=useMemo(()=>catalog.filter(x=>{
-    const hay=(x.nombre+' '+x.pn+' '+x.sn+' '+x.ata).toLowerCase().includes(search.toLowerCase());
-    return hay && (!onlyStock || x.stock>0);
-  }),[catalog,search,onlyStock]);
-  function add(item){
-    const manifest=read(keys.manifest);
-    const current=manifest.find(x=>x.pn===item.pn);
-    if(current) current.cantidad=Math.min(current.cantidad+1,item.stock);
-    else manifest.push({...item,cantidad:1});
-    write(keys.manifest,manifest);
-    setCatalog([...catalog]);
-    window.dispatchEvent(new Event('storage'));
+export default function CatalogPage({ offersOnly = false }) {
+  const catalog = useStoredData(keys.catalog),
+    categories = useStoredData(keys.categories);
+  const [params, setParams] = useSearchParams();
+  const search = params.get("buscar") || "",
+    category = params.get("categoria") || "",
+    ata = params.get("ata") || "",
+    onlyStock = params.get("stock") === "1";
+  const selected = sessionStorage.getItem("skyops_u2_aeronave");
+  function filter(name, value) {
+    const next = new URLSearchParams(params);
+    value ? next.set(name, value) : next.delete(name);
+    setParams(next, { replace: true });
   }
-  return <>
-    <div className="page-title"><h1>Catálogo de componentes</h1><p className="text-secondary">Busca por nombre, P/N, S/N o capítulo ATA.</p></div>
-    {selected&&<Alert variant="warning">Armando manifiesto para <strong>{selected}</strong>.</Alert>}
-    <div className="d-flex gap-3 mb-3 responsive-stack">
-      <Form.Control placeholder="Buscar componente..." value={search} onChange={e=>setSearch(e.target.value)}/>
-      <Form.Check className="pt-2" label="Solo con stock" checked={onlyStock} onChange={e=>setOnlyStock(e.target.checked)}/>
-    </div>
-    <Row className="g-3">{filtered.map(x=><Col md={6} lg={4} key={x.pn}><Card className="component-card">
-      <Card.Body><Card.Title className="h5">{x.nombre}</Card.Title><div className="small text-secondary">{x.pn} · {x.sn}</div><p className="mt-2 mb-1">{x.ata}</p><p className="mb-2">{x.bodega}</p>
-      <Badge bg={x.stock?'success':'secondary'} className="me-2">Stock {x.stock}</Badge><Badge bg={x.certificado?'info':'warning'} text={x.certificado?undefined:'dark'}>{x.certificado?'8130-3 OK':'Sin 8130-3'}</Badge>
-      <div><Button className="mt-3" disabled={x.stock<1} onClick={()=>add(x)}>Agregar al manifiesto</Button></div></Card.Body></Card></Col>)}</Row>
-  </>;
+  const filtered = catalog.filter(
+    (item) =>
+      (item.nombre + " " + item.pn + " " + item.sn + " " + item.ata)
+        .toLowerCase()
+        .includes(search.toLowerCase()) &&
+      (!category || item.categoria === category) &&
+      (!ata || item.ata === ata) &&
+      (!onlyStock || item.stock > 0) &&
+      (!offersOnly || item.descuento > 0),
+  );
+  return (
+    <>
+      <div className="page-title">
+        <h1>
+          {offersOnly ? "Ofertas de componentes" : "Catálogo de componentes"}
+        </h1>
+        <p className="text-secondary">
+          Repuestos aeronáuticos para tu orden AOG.
+        </p>
+      </div>
+      {selected && (
+        <Alert variant="warning">
+          Armando manifiesto para <strong>{selected}</strong>.
+        </Alert>
+      )}
+      <Row className="g-3 mb-3">
+        <Col md={4}>
+          <Form.Label htmlFor="catalog-search">Buscar componente</Form.Label>
+          <Form.Control
+            id="catalog-search"
+            value={search}
+            onChange={(event) => filter("buscar", event.target.value)}
+          />
+        </Col>
+        <Col md={3}>
+          <Form.Label htmlFor="catalog-category">Categoría</Form.Label>
+          <Form.Select
+            id="catalog-category"
+            value={category}
+            onChange={(event) => filter("categoria", event.target.value)}
+          >
+            <option value="">Todas las categorías</option>
+            {categories.map((value) => (
+              <option key={value}>{value}</option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col md={3}>
+          <Form.Label htmlFor="catalog-ata">Capítulo ATA</Form.Label>
+          <Form.Select
+            id="catalog-ata"
+            value={ata}
+            onChange={(event) => filter("ata", event.target.value)}
+          >
+            <option value="">Todos los capítulos</option>
+            {[...new Set(catalog.map((item) => item.ata))].map((value) => (
+              <option key={value}>{value}</option>
+            ))}
+          </Form.Select>
+        </Col>
+        <Col md={2} className="d-flex flex-column justify-content-end gap-2">
+          <Form.Check
+            id="only-stock"
+            label="Solo con stock"
+            checked={onlyStock}
+            onChange={(event) =>
+              filter("stock", event.target.checked ? "1" : "")
+            }
+          />
+          <Button variant="outline-secondary" onClick={() => setParams({})}>
+            Limpiar filtros
+          </Button>
+        </Col>
+      </Row>
+      <p role="status">{filtered.length} componentes encontrados.</p>
+      {!filtered.length && (
+        <Alert variant="secondary">No se encontraron componentes.</Alert>
+      )}
+      <Row className="g-3">
+        {filtered.map((product) => (
+          <Col md={6} lg={4} key={product.pn}>
+            <ProductCard product={product} onAdd={addToCart} />
+          </Col>
+        ))}
+      </Row>
+    </>
+  );
 }

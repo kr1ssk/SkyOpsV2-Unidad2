@@ -1,65 +1,195 @@
-import { useMemo, useState } from 'react';
-import { Alert, Button, Form, Table } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { keys, read, write } from '../services/storage';
-import { validarLicencia, validarMatricula, validarNombreCompleto } from '../utils/validators';
+import { useState } from "react";
+import { Alert, Button, Col, Form, Row } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import useStoredData from "../hooks/useStoredData";
+import { keys, read } from "../services/storage";
+import { confirmOrder, money, orderTotal } from "../services/shop";
+import {
+  validarLicencia,
+  validarMatricula,
+  validarNombreCompleto,
+} from "../utils/validators";
 
-export default function DispatchPage(){
-  const navigate=useNavigate();
-  const manifest=read(keys.manifest);
-  const fleet=read(keys.fleet);
-  const selected=sessionStorage.getItem('skyops_u2_aeronave') || '';
-  const [form,setForm]=useState({matricula:selected,destino:'',ingeniero:'',licencia:'',autorizacion:false});
-  const [errors,setErrors]=useState({});
-  const destinos=useMemo(()=>['Puerta 9','Puerta 14','Hangar 1','Hangar 2','Plataforma Remota 1'],[]);
-  function change(e){
-    const {name,value,type,checked}=e.target;
-    setForm(f=>({...f,[name]:type==='checkbox'?checked:value}));
+export default function DispatchPage() {
+  const navigate = useNavigate(),
+    items = useStoredData(keys.manifest),
+    fleet = useStoredData(keys.fleet);
+  const user = read(keys.session, null);
+  const [form, setForm] = useState({
+    matricula: sessionStorage.getItem("skyops_u2_aeronave") || "",
+    destino: "",
+    ingeniero: user?.nombre || "",
+    licencia: "",
+    direccion: user?.direccion || "",
+    entrega: "Estándar",
+    autorizacion: false,
+  });
+  const [errors, setErrors] = useState({}),
+    [payment, setPayment] = useState("aprobado"),
+    [busy, setBusy] = useState(false);
+  function change(event) {
+    const { name, value, type, checked } = event.target;
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   }
-  function validate(){
-    const next={};
-    if(!validarMatricula(form.matricula)) next.matricula='Formato requerido: CC- y tres letras.';
-    if(!form.destino) next.destino='Selecciona una puerta o hangar.';
-    if(!validarNombreCompleto(form.ingeniero)) next.ingeniero='Ingresa nombre y apellido.';
-    if(!validarLicencia(form.licencia)) next.licencia='Formato requerido: dos letras, guion y cuatro números.';
-    if(!form.autorizacion) next.autorizacion='Debes confirmar la declaración.';
-    setErrors(next); return Object.keys(next).length===0;
+  function fieldError(name, value) {
+    if (name === "matricula" && !validarMatricula(value))
+      return "Formato requerido: CC- y tres letras.";
+    if (name === "ingeniero" && !validarNombreCompleto(value))
+      return "Ingresa nombre y apellido.";
+    if (name === "licencia" && !validarLicencia(value))
+      return "Formato requerido: LE-3401.";
+    if ((name === "destino" || name === "direccion") && !value.trim())
+      return "Completa este campo.";
+    if (name === "autorizacion" && !value)
+      return "Debes confirmar la declaración.";
+    return "";
   }
-  function submit(e){
-    e.preventDefault();
-    if(!manifest.length){ setErrors({general:'No puedes despachar sin componentes.'}); return; }
-    if(!validate()) return;
-    const bitacora=read(keys.logbook);
-    const now=new Date();
-    bitacora.unshift({
-      folio:'AOG-'+Math.floor(1000+Math.random()*9000),
-      matricula:form.matricula.trim().toUpperCase(),
-      destino:form.destino,
-      responsable:form.ingeniero.trim(),
-      fecha:now.toISOString().slice(0,16).replace('T',' '),
-      respuesta:(60+Math.floor(Math.random()*30))+' s',
-      estado:'EN CURSO'
-    });
-    write(keys.logbook,bitacora); write(keys.manifest,[]);
-    sessionStorage.removeItem('skyops_u2_aeronave');
-    navigate('/bitacora');
+  function blur(event) {
+    const { name, value } = event.target;
+    setErrors({ ...errors, [name]: fieldError(name, value) });
   }
-  return <>
-    <div className="page-title"><h1>Despacho de Urgencia AOG</h1><p className="text-secondary">Valida la orden antes de autorizar su salida.</p></div>
-    {!manifest.length&&<Alert variant="warning">El manifiesto está vacío. Vuelve al catálogo antes de autorizar.</Alert>}
-    {errors.general&&<Alert variant="danger">{errors.general}</Alert>}
-    <div className="table-responsive mb-4"><Table striped><thead><tr><th>P/N</th><th>Componente</th><th>Bodega</th><th>Cantidad</th></tr></thead>
-      <tbody>{manifest.map(x=><tr key={x.pn}><td>{x.pn}</td><td>{x.nombre}</td><td>{x.bodega}</td><td>{x.cantidad}</td></tr>)}</tbody></Table></div>
-    <Form onSubmit={submit} noValidate className="panel-dark">
-      <div className="row g-3">
-        <Form.Group className="col-md-6"><Form.Label>Matrícula *</Form.Label><Form.Control name="matricula" list="fleet-list" value={form.matricula} onChange={change} isInvalid={!!errors.matricula}/><Form.Control.Feedback type="invalid">{errors.matricula}</Form.Control.Feedback></Form.Group>
-        <datalist id="fleet-list">{fleet.map(x=><option value={x.matricula} key={x.matricula}/>)}</datalist>
-        <Form.Group className="col-md-6"><Form.Label>Destino *</Form.Label><Form.Select name="destino" value={form.destino} onChange={change} isInvalid={!!errors.destino}><option value="">Selecciona...</option>{destinos.map(x=><option key={x}>{x}</option>)}</Form.Select><Form.Control.Feedback type="invalid">{errors.destino}</Form.Control.Feedback></Form.Group>
-        <Form.Group className="col-md-6"><Form.Label>Ingeniero responsable *</Form.Label><Form.Control name="ingeniero" value={form.ingeniero} onChange={change} isInvalid={!!errors.ingeniero}/><Form.Control.Feedback type="invalid">{errors.ingeniero}</Form.Control.Feedback></Form.Group>
-        <Form.Group className="col-md-6"><Form.Label>Licencia *</Form.Label><Form.Control name="licencia" placeholder="LE-3401" value={form.licencia} onChange={change} isInvalid={!!errors.licencia}/><Form.Control.Feedback type="invalid">{errors.licencia}</Form.Control.Feedback></Form.Group>
+  function submit(event) {
+    event.preventDefault();
+    if (busy) return;
+    const next = Object.fromEntries(
+      Object.entries(form).map(([key, value]) => [key, fieldError(key, value)]),
+    );
+    if (!items.length)
+      next.general = "No puedes comprar con el manifiesto vacío.";
+    setErrors(next);
+    if (Object.values(next).some(Boolean)) return;
+    setBusy(true);
+    try {
+      const order = confirmOrder(form, payment);
+      navigate("/compra/exitosa/" + order.id, { replace: true });
+    } catch (error) {
+      navigate("/compra/error", { state: { message: error.message } });
+    } finally {
+      setBusy(false);
+    }
+  }
+  const fields = [
+    ["matricula", "Matrícula de aeronave"],
+    ["ingeniero", "Ingeniero responsable"],
+    ["licencia", "Licencia"],
+    ["direccion", "Dirección de entrega"],
+  ];
+  return (
+    <>
+      <div className="page-title">
+        <h1>Compra y despacho AOG</h1>
+        <p className="text-secondary">
+          Confirma los datos de entrega y autoriza la orden.
+        </p>
       </div>
-      <Form.Check className="my-3" name="autorizacion" checked={form.autorizacion} onChange={change} label="Declaro que la información es correcta." isInvalid={!!errors.autorizacion} feedback={errors.autorizacion}/>
-      <Button type="submit" disabled={!manifest.length}>Autorizar despacho</Button>
-    </Form>
-  </>;
+      {!items.length && (
+        <Alert variant="warning">
+          El manifiesto está vacío. Vuelve al catálogo antes de autorizar.
+        </Alert>
+      )}
+      {errors.general && <Alert variant="danger">{errors.general}</Alert>}
+      {user && (
+        <Alert variant="info">
+          Nombre y dirección completados desde tu perfil.
+        </Alert>
+      )}
+      <p className="fs-4">
+        Total de la orden: <strong>{money(orderTotal(items))}</strong>
+      </p>
+      <Form onSubmit={submit} noValidate className="panel-dark">
+        <Row className="g-3">
+          {fields.map(([name, label]) => (
+            <Col md={6} key={name}>
+              <Form.Group controlId={"checkout-" + name}>
+                <Form.Label>{label} *</Form.Label>
+                <Form.Control
+                  name={name}
+                  value={form[name]}
+                  onChange={change}
+                  onBlur={blur}
+                  isInvalid={!!errors[name]}
+                  list={name === "matricula" ? "fleet-list" : undefined}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors[name]}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
+          ))}
+          <datalist id="fleet-list">
+            {fleet.map((item) => (
+              <option key={item.matricula} value={item.matricula} />
+            ))}
+          </datalist>
+          <Col md={6}>
+            <Form.Group controlId="checkout-destino">
+              <Form.Label>Puerta o hangar *</Form.Label>
+              <Form.Select
+                name="destino"
+                value={form.destino}
+                onChange={change}
+                onBlur={blur}
+                isInvalid={!!errors.destino}
+              >
+                <option value="">Selecciona...</option>
+                {[
+                  "Puerta 9",
+                  "Puerta 14",
+                  "Hangar 1",
+                  "Hangar 2",
+                  "Plataforma Remota 1",
+                ].map((value) => (
+                  <option key={value}>{value}</option>
+                ))}
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {errors.destino}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="checkout-entrega">
+              <Form.Label>Modalidad de entrega</Form.Label>
+              <Form.Select
+                name="entrega"
+                value={form.entrega}
+                onChange={change}
+              >
+                <option>Estándar</option>
+                <option>Urgencia AOG</option>
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group controlId="checkout-payment">
+              <Form.Label>Resultado del pago de demostración</Form.Label>
+              <Form.Select
+                value={payment}
+                onChange={(event) => setPayment(event.target.value)}
+              >
+                <option value="aprobado">Pago aprobado</option>
+                <option value="rechazado">Pago rechazado</option>
+              </Form.Select>
+              <Form.Text className="text-light">
+                Simulación académica: no se realizan cobros.
+              </Form.Text>
+            </Form.Group>
+          </Col>
+        </Row>
+        <Form.Check
+          className="my-3"
+          id="checkout-authorization"
+          name="autorizacion"
+          checked={form.autorizacion}
+          onChange={change}
+          label="Declaro que la información es correcta y autorizo el despacho."
+          isInvalid={!!errors.autorizacion}
+          feedback={errors.autorizacion}
+        />
+        <Button type="submit" disabled={!items.length || busy}>
+          Confirmar compra y despacho
+        </Button>
+      </Form>
+    </>
+  );
 }
