@@ -19,6 +19,7 @@
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
     "babel-loader": "^9.2.1",
+    "babel-plugin-istanbul": "^8.0.0",
     "jasmine-core": "^5.4.0",
     "karma": "^6.4.4",
     "karma-chrome-launcher": "^3.2.0",
@@ -33,6 +34,40 @@
     "test": "react-scripts test",
     "test:ci": "react-scripts test --watchAll=false --coverage",
     "test:karma": "karma start karma.conf.js --single-run",
-    "test:karma:watch": "karma start karma.conf.js"
+    "test:karma:ci": "karma start karma.conf.js --single-run --browsers ChromeHeadlessCI"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "overrides": {
+    "karma-jasmine": {
+      "jasmine-core": "$jasmine-core"
+    }
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}",
+      "!src/index.js",
+      "!src/setupTests.js",
+      "!src/data/**"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   }
 }
